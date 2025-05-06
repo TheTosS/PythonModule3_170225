@@ -19,7 +19,7 @@ class UserProfile:
         print(f"email {value} успешно установлен")
 
 
-# --- Демонстрация использования ---
+# --- Деail)монстрация использования ---
 print("--- Создание профиля пользователя ---")
 correct_email = "test.user@example.com"
 incorrect_email = "test.user@example"
@@ -30,4 +30,4 @@ except ValueError as e:
     print(f"Ошибка при создании: {e}")
 
 user.email = "new.email@example.com"
-user.email
+print(user.email)

@@ -14,7 +14,7 @@ class Student(People):
         People.__init__(self, name, surname)
         # Добавляем уникальные атрибуты
         self.learning_university = university
-        self.__money = 1000
+        self.__money = 1000 # _Student__money
         self.__payment = payment
 
     def pay_education(self):
@@ -36,6 +36,7 @@ class Teacher(People):
 
 
 student = Student("Альберт", "Эдуардович", "Технический университет", 150)
-teacher = Teacher("Альберт", "Эдуардович", "Технический университет", 2000)
-print(teacher.name)
-print(teacher.teaching_university)
+print(student.get_full_name())
+# teacher = Teacher("Альберт", "Эдуардович", "Технический университет", 2000)
+# print(teacher.name)
+# print(teacher.teaching_university)
