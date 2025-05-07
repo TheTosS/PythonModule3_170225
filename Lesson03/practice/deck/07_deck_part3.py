@@ -2,6 +2,10 @@ import random
 
 
 class Card:
+    DIAMONDS = "Diamonds"
+    HEARTHS = "Hearts"
+    SPADES = "Spades"
+    CLUBS = "Clubs"
     def __init__(self, value, suit):
         self.__value = value  # Значение карты(2, 3... 10, J, Q, K, A)
         self.__suit = suit  # Масть карты
@@ -77,10 +81,6 @@ deck = Deck()
 # Тусуем колоду
 deck.shuffle()
 
-hand = deck.draw(3)
-
-print(deck)  # deck.__str__()
-print(hand)  # card.__repr__()
-
-my_list = [3, 4, 7, 10]
-
+card1 = Card("Q", Card.HEARTHS)
+card2 = Card("Q", Card.SPADES)
+card3 = Card("Q", Card.CLUBS)

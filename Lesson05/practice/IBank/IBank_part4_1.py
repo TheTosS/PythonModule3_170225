@@ -1,5 +1,7 @@
 # Сюда отправляем готовое решение IBank часть-4
 from typing import List
+
+
 class Operation:
     # Типы операций храним в свойствах класса
     DEPOSIT = 'Пополнение'
@@ -64,19 +66,21 @@ class Account:
     def balance(self) -> int:
         return self.__balance
 
+    def _enough_money(self, amount) -> bool:  # protected
+        return amount <= self.balance
+
     def withdraw(self, amount: int, to_history: bool = True) -> None:
         """
         Снятие суммы с текущего счета
         :param amount: сумма
         """
-        if amount > self.balance:
+        if not self._enough_money(amount):
             raise ValueError("Недостаточно средств")
 
         self.__balance -= amount
         if to_history:
             operation = Operation(amount, Operation.WITHDRAW)
             self.__history.append(operation)
-
 
     def transfer(self, target_account: 'Account', amount: int) -> None:
         """
@@ -98,27 +102,24 @@ class Account:
         return self.__history
 
 
-# TODO-1: Создаем класс для кредитного аккаунта, наследуясь от аккаунта
 class CreditAccount(Account):
     def __init__(self, name, passport, phone_number, start_balance=0, negative_limit=0):
         Account.__init__(self, name, passport, phone_number, start_balance)
         self.negative_limit = negative_limit
-        # TODO-1: Пока реализуем ТОЛЬКО первый пункт задания "возможность уходить в отрицательный баланс"
-        #   Договоримся, что negative_limit будет положительным числом.
-        #   Например, negative_limit = 500 означает, что мы можем уйти в минус на 500 рублей, self.__balance = -500
 
-    def withdraw(self, amount: int, to_history: bool = True) -> None:
-        """
-        Снятие суммы с текущего счета
-        :param amount: сумма
-        """
-        if amount > self.balance + self.negative_limit:
-            raise ValueError("Недостаточно средств")
+    # Переопределение
+    def _enough_money(self, amount) -> bool:  # protected
+        return amount <= self.balance + self.negative_limit
 
-        self.__balance -= amount
-        if to_history:
-            operation = Operation(amount, Operation.WITHDRAW)
-            self.__history.append(operation)
+    # Дополнение/расширение
+    def full_info(self) -> str:
+        origin_string = super().full_info()
+        return "<К>"+origin_string
+
+    def __repr__(self) -> str:
+        origin_string = super().__repr__()
+        return "<К>"+origin_string
+
 
 if __name__ == "__main__":
     pass

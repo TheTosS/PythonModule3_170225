@@ -6,7 +6,7 @@ class MyApp(App):
     def build(self):
         btn = Button(
             text="Click me",
-            font_size = 40,
+            font_size = 60,
         )
         btn.bind(on_press=on_btn_click)
         # Button: https://kivy.org/doc/stable/api-kivy.uix.button.html#module-kivy.uix.button

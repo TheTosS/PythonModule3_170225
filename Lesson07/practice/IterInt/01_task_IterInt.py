@@ -2,13 +2,17 @@
 # возможность итерировать по цифрам числа
 
 class IterInt(int):
-    pass
+    def __iter__(self):
+        n_str = str(self)
+        for el in n_str:
+            yield int(el)
 
 
-n = IterInt(12346)
+n = IterInt(665)
 
 for digit in n:
     print("digit = ", digit)
+#
 
 # Выведет:
 # digit = 1
