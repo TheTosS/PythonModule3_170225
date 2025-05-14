@@ -9,6 +9,7 @@
 #   2.2 Для каждой вершины списка смежности
 #       2.2.1 Если еще до этой вершины еще не доходили, то помечаем расстояние до нее и добавляем ее в конец очереди
 #       2.2.1 Если вершину уэе посещали, то игнорируем ее
+
 #         3 --5--2   6--7
 #        / \ /  /
 #       0---1--4
@@ -24,15 +25,18 @@ graph = [
     [6]             # 7
 ]
 
-start = 0
-lengths = [None] * (len(graph))
-lengths[start] = 0
-queue = [start]
-while queue:
-    cur_vertex = queue.pop(0)
-    for vertex in graph[cur_vertex]:
-        if lengths[vertex] is None:
-            lengths[vertex] = lengths[cur_vertex] + 1
-            queue.append(vertex)
+def bfs(graph: list[list], start) -> list:
+    lengths = [None] * len(graph)
+    lengths[start] = 0
+    queue = [start]
+    while queue:
+        cur_vertex = queue.pop(0)
+        for vertex in graph[cur_vertex]:
+            if lengths[vertex] is None:
+                lengths[vertex] = lengths[cur_vertex] + 1
+                queue.append(vertex)
 
-print(lengths)
+    return lengths
+
+result = bfs(graph, 0)
+print(result)
