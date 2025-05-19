@@ -14,7 +14,17 @@
 
 # Пример использования:
 class LoggedAttribute:
-    ...  # Ваш код дескриптора
+    def __set_name__(self, owner, name):
+        self._private_name = f'_{name}'
+        self._public_name = name
+
+    def __get__(self, instance, owner):
+        print(f"Чтение атрибута {self._public_name}")
+        return instance.__dict__.get(self._private_name)
+
+    def __set__(self, instance, value):
+        print(f"Запись значения {value} в атрибут {self._public_name}")
+        instance.__dict__[self._private_name] = value
 
 
 class Settings:

@@ -1,6 +1,7 @@
 # "Дескриптор для Числа в Диапазоне (BoundedNumber)"
 
-# Создайте дескриптор для числовых атрибутов (целые или с плавающей точкой), который гарантирует, что присваиваемое значение находится в заданном диапазоне [минимальное, максимальное].
+# Создайте дескриптор для числовых атрибутов (целые или с плавающей точкой), который гарантирует,
+# что присваиваемое значение находится в заданном диапазоне [минимальное, максимальное].
 #
 # Требования:
 #
@@ -14,15 +15,33 @@
 # Пример использования:
 
 class BoundedNumber:
-     ... # Ваш код дескриптора
+    def __init__(self, min_value, max_value):
+        self._min_value = min_value
+        self._max_value = max_value
+
+    def __set_name__(self, owner, name):
+        self._private_name = f'_{name}'
+        self._public_name = name
+
+    def __get__(self, instance, owner):
+        return instance.__dict__.get(self._private_name)
+
+    def __set__(self, instance, value):
+        if not isinstance(value, int):
+            raise TypeError("must be int")
+        if not self._min_value <= value <= self._max_value:
+            raise ValueError("...")
+        instance.__dict__[self._private_name] = value
+
 
 class GameStats:
-    health = BoundedNumber(0, 100) # Здоровье от 0 до 100
-    level = BoundedNumber(1, 50)   # Уровень от 1 до 50
+    health = BoundedNumber(0, 100)  # Здоровье от 0 до 100
+    level = BoundedNumber(1, 50)  # Уровень от 1 до 50
 
     def __init__(self, health, level):
         self.health = health
         self.level = level
+
 
 # Пример работы:
 stats = GameStats(85, 15)
@@ -31,17 +50,17 @@ print(stats.level)
 
 # Попытка присвоить значения вне диапазона
 try:
-    stats.health = 120 # Ожидается ValueError
+    stats.health = 120  # Ожидается ValueError
 except ValueError as e:
     print(f"Ошибка: {e}")
 
 try:
-    stats.level = 0 # Ожидается ValueError
+    stats.level = 0  # Ожидается ValueError
 except ValueError as e:
     print(f"Ошибка: {e}")
 
 # Попытка присвоить значение некорректного типа
 try:
-     stats.health = "max" # Ожидается TypeError
+    stats.health = "max"  # Ожидается TypeError
 except TypeError as e:
-     print(f"Ошибка: {e}")
+    print(f"Ошибка: {e}")

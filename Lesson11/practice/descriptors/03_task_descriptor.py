@@ -7,9 +7,23 @@
 # Реализуйте __set__.
 
 # Пример использования:
+import re
 
 class EmailAttribute:
-    ...  # Ваш код дескриптора
+    def __init__(self):
+        self._email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+
+    def __set_name__(self, owner, name):
+        self._private_name = f'_{name}'
+        self._public_name = name
+
+    def __get__(self, instance, owner):
+        return instance.__dict__.get(self._private_name)
+
+    def __set__(self, instance, value):
+        if not self._email_pattern.fullmatch(value):
+            raise ValueError("email incorrect")
+        instance.__dict__[self._private_name] = value
 
 
 class Contact:
