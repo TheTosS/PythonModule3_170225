@@ -3,3 +3,4 @@ INSERT INTO Products (ProductName, Price, StockQuantity) VALUES ('Футболк
 INSERT INTO Products (ProductName, Price, StockQuantity) VALUES ('Ноутбук XYZ Pro', 45000.00, 15);
 INSERT INTO Products (ProductName, Price, StockQuantity) VALUES ('Мышь беспроводная', 890.00, 200);
 INSERT INTO Products (ProductName, Price, StockQuantity) VALUES ('Набор ручек (5 шт.)', 120.99, 300);
+INSERT INTO Products (ProductName, Price, StockQuantity) VALUES ('Набор маркеров (2 шт.)', 220.99, 120);

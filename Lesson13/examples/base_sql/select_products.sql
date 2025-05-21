@@ -1,2 +1,2 @@
-SELECT *
+SELECT ProductName, Price, StockQuantity
 FROM Products;
