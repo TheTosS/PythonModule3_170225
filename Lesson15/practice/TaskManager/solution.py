@@ -19,15 +19,17 @@ class Task:
     @classmethod
     def _ensure_db_table_exists(cls):
         """Создает таблицу tasks, если она еще не существует."""
-        cls.DB_FILE.parent.mkdir(parents=True, exist_ok=True)  # Убедимся, что директория существует
+        # cls.DB_FILE.parent.mkdir(parents=True, exist_ok=True)  # Убедимся, что директория существует
         with Connect(cls.DB_FILE) as cursor:
             cursor.execute('''
-                    CREATE TABLE IF NOT EXISTS tasks (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        title TEXT NOT NULL,
+                    CREATE TABLE IF NOT EXISTS tasks
+                    (
+                        task_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title       TEXT NOT NULL,
                         description TEXT,
-                        priority TEXT NOT NULL DEFAULT 'Pending'
-                    )
+                        status      TEXT CHECK (status IN ('Pending', 'In Progress', 'Completed')) DEFAULT 'Pending',
+                        priority    INTEGER CHECK ( priority BETWEEN 1 AND 5) DEFAULT 3
+                    );
                 ''')
         # commit() происходит автоматически при выходе из with Connect
 
@@ -52,4 +54,3 @@ class Task:
     def delete(self):
         """Удаляет задачу из базы данных."""
         # TODO-3: реализуйте метод
-
