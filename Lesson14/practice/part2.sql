@@ -4,6 +4,8 @@ VALUES ('Создать задачи', 'Описание задач', 'Pending',
 -- Задача 2: Задача без описания, но с высоким приоритетом (5), статусом "В ожидании" и названием "Позвонить другу".
 INSERT INTO tasks(title, status, priority)
 VALUES ('Позвонить другу',  'Pending', 5);
+INSERT INTO tasks(title, status, priority)
+VALUES ('Позвонить на работу',  'Pending', 3);
 -- Задача 3: Задача со статусом "В процессе" и названием "Завершить отчёт".
 INSERT INTO tasks(title, status)
 VALUES ('Завершить отчёт',  'In Progress');
