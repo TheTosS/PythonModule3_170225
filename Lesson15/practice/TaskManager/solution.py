@@ -9,8 +9,8 @@ class Task:
 
     DB_FILE = Path("tasks.db")
 
-    def __init__(self, title, description="", status="Pending", priority=3):
-        self.id = None
+    def __init__(self, title, description="", status="Pending", priority=3, id=None):
+        self.id = id
         self.title = title
         self.description = description
         self.status = status
@@ -57,21 +57,27 @@ class Task:
                 cursor.execute(sql_insert, (self.title, self.description, self.priority))
                 self.id = cursor.lastrowid
 
-
-    def load(self):
-        """
-        Загружает задачу из БД
-        """
-        # TODO-4: реализуйте метод
+    @classmethod
+    def get_by_id(cls, id) -> 'Task':
+        sql_select = "SELECT * FROM tasks WHERE task_id = ?"
+        with Connect(cls.DB_FILE) as cursor:
+            cursor.execute(sql_select, (id, ))
+            data = cursor.fetchone()
+            return Task(*data[1:], data[0])
 
     def delete(self):
         """Удаляет задачу из базы данных."""
         # TODO-3: реализуйте метод
+        sql_delete = "DELETE FROM tasks WHERE task_id = ?"
+        with Connect(Task.DB_FILE) as cursor:
+            cursor.execute(sql_delete, (self.id, ))
+            if cursor.rowcount > 0:
+                print(f"Задача с id={self.id} удалена")
+                self.id = None
+            else:
+                print(f"Задача с id={self.id} не найдена")
 
 
-task1 = Task("тестовая задача")
-task1.save() # -> DB
-task1.priority = 1
-task1.save() # -> UPDATE
-task1.save()
-task1.save()
+
+task1 = Task.get_by_id(id=4)
+print(task1)
