@@ -9,11 +9,11 @@ class Task:
 
     DB_FILE = Path("tasks.db")
 
-    def __init__(self, title, description="", priority="Pending"):
-        # TODO-0: что будем делать с id?
-        self.id = ...
+    def __init__(self, title, description="", status="Pending", priority=3):
+        self.id = None
         self.title = title
         self.description = description
+        self.status = status
         self.priority = priority
 
     @classmethod
@@ -34,16 +34,29 @@ class Task:
         # commit() происходит автоматически при выходе из with Connect
 
     def __repr__(self):
-        # TODO-1: Возвращает строку формата Task(id=..., title='...', priority=...)
-        ...
+        return f"Task(id={self.id}, title='{self.title}', priority='{self.priority}')"
 
     def save(self):
         """
         Сохраняет или обновляет задачу в базе данных.
         Если id None, вставляет новую задачу. Иначе, обновляет существующую.
         """
-        # TODO-2: реализуйте метод
+        Task._ensure_db_table_exists()
+        # TODO-2(complete): реализуйте метод
         sql_insert = "INSERT INTO tasks (title, description, priority) VALUES (?, ?, ?)"
+        sql_update =  """
+            UPDATE tasks 
+            SET title = ?, description = ?, status = ?, priority = ?
+            WHERE task_id = ?;
+        """
+        if self.id:
+            with Connect(Task.DB_FILE) as cursor:
+                cursor.execute(sql_update, (self.title, self.description, self.status, self.priority, self.id))
+        else:
+            with Connect(Task.DB_FILE) as cursor:
+                cursor.execute(sql_insert, (self.title, self.description, self.priority))
+                self.id = cursor.lastrowid
+
 
     def load(self):
         """
@@ -54,3 +67,11 @@ class Task:
     def delete(self):
         """Удаляет задачу из базы данных."""
         # TODO-3: реализуйте метод
+
+
+task1 = Task("тестовая задача")
+task1.save() # -> DB
+task1.priority = 1
+task1.save() # -> UPDATE
+task1.save()
+task1.save()
