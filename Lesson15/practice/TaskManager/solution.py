@@ -1,5 +1,6 @@
 from connection import Connect
 from pathlib import Path
+from typing import Optional
 
 
 class Task:
@@ -44,7 +45,7 @@ class Task:
         Task._ensure_db_table_exists()
         # TODO-2(complete): реализуйте метод
         sql_insert = "INSERT INTO tasks (title, description, priority) VALUES (?, ?, ?)"
-        sql_update =  """
+        sql_update = """
             UPDATE tasks 
             SET title = ?, description = ?, status = ?, priority = ?
             WHERE task_id = ?;
@@ -58,19 +59,32 @@ class Task:
                 self.id = cursor.lastrowid
 
     @classmethod
-    def get_by_id(cls, id) -> 'Task':
+    def get_by_id(cls, id) -> Optional['Task']:
         sql_select = "SELECT * FROM tasks WHERE task_id = ?"
         with Connect(cls.DB_FILE) as cursor:
-            cursor.execute(sql_select, (id, ))
+            cursor.execute(sql_select, (id,))
             data = cursor.fetchone()
+            if data is None:
+                return None
             return Task(*data[1:], data[0])
+
+    @classmethod
+    def get_all_tasks(cls) -> list['Task']:
+        sql_select = "SELECT * FROM tasks"
+        with Connect(cls.DB_FILE) as cursor:
+            cursor.execute(sql_select)
+            tasks_data = cursor.fetchall()
+            tasks = []
+            for data in tasks_data:
+                tasks.append(Task(*data[1:], data[0]))
+            return tasks
 
     def delete(self):
         """Удаляет задачу из базы данных."""
         # TODO-3: реализуйте метод
         sql_delete = "DELETE FROM tasks WHERE task_id = ?"
         with Connect(Task.DB_FILE) as cursor:
-            cursor.execute(sql_delete, (self.id, ))
+            cursor.execute(sql_delete, (self.id,))
             if cursor.rowcount > 0:
                 print(f"Задача с id={self.id} удалена")
                 self.id = None
@@ -78,6 +92,5 @@ class Task:
                 print(f"Задача с id={self.id} не найдена")
 
 
-
-task1 = Task.get_by_id(id=4)
-print(task1)
+tasks = Task.get_all_tasks()
+print(tasks)
