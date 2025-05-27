@@ -13,13 +13,25 @@ class Task:
         self.title = title
         self.description = description
         self.status = status
-        self.priority = priority
+        if 1 <= priority <= 5:
+            self.priority = priority
+        else:
+            raise ValueError(...)
+
+    def mark_as_completed(self):
+        self.status = Task.COMPLETED
+
+    def set_priority(self, new_priority):
+        if 1 <= new_priority <= 5:
+            self.priority = new_priority
+        else:
+            raise ValueError(...)
 
     def __repr__(self):
         return f"Task(id={self.id}, title='{self.title}', priority='{self.priority}')"
 
 
-class TaskRepository:
+class TaskRepository: # TaskRepository -> TaskStorage
     DB_FILE = Path("tasks.db")
 
     def __init__(self):
@@ -61,6 +73,13 @@ class TaskRepository:
                 cursor.execute(sql_insert, (task.title, task.description, task.priority))
                 task.id = cursor.lastrowid
 
+    @staticmethod
+    def _map_rows_to_tasks(tasks_data: list[tuple]) -> list[Task]:
+        tasks = []
+        for data in tasks_data:
+            tasks.append(Task(*data[1:], data[0]))
+        return tasks
+
     def get_by_id(self, id) -> Optional['Task']:
         sql_select = "SELECT * FROM tasks WHERE task_id = ?"
         with Connect(self.DB_FILE) as cursor:
@@ -74,11 +93,25 @@ class TaskRepository:
         sql_select = "SELECT * FROM tasks"
         with Connect(self.DB_FILE) as cursor:
             cursor.execute(sql_select)
-            tasks_data = cursor.fetchall()
-            tasks = []
-            for data in tasks_data:
-                tasks.append(Task(*data[1:], data[0]))
-            return tasks
+            return self._map_rows_to_tasks(cursor.fetchall())
+
+    def get_tasks_by_status(self, status: str) -> list[Task]:
+        sql = """
+        SELECT * FROM tasks
+        WHERE status = ?
+        """
+        with Connect(self.DB_FILE) as cursor:
+            cursor.execute(sql, (status, ))
+            return self._map_rows_to_tasks(cursor.fetchall())
+
+    def get_tasks_by_priority_range(self, min_priority: int, max_priority: int) -> list[Task]:
+        sql = """
+        SELECT * FROM tasks
+        WHERE priority BETWEEN ? AND ?;
+        """
+        with Connect(self.DB_FILE) as cursor:
+            cursor.execute(sql, (min_priority, max_priority))
+            return self._map_rows_to_tasks(cursor.fetchall())
 
     def delete(self, task: Task):
         """Удаляет задачу из базы данных."""
@@ -104,7 +137,9 @@ task_repository = TaskRepository()  # Создаем экземпляр репо
 # task_repository.save(new_task)  # Сохраняем новую задачу, new_task.id будет обновлен
 
 task = task_repository.get_by_id(id=1)
-task_repository.delete(task)
+task.mark_as_completed()
+if task:
+    task_repository.delete(task)
 print(task)
 # print(f"Сохранена новая задача: {new_task}")
 
