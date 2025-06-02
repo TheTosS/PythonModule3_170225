@@ -1,0 +1,12 @@
+CREATE TABLE Colors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE Products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    price REAL NOT NULL,
+    color_id INTEGER,
+    FOREIGN KEY (color_id) REFERENCES Colors(id)
+);
