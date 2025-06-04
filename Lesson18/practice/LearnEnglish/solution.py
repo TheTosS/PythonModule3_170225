@@ -1,18 +1,23 @@
 import sqlite3
 import random
 import database
+from helpers.connection import Connect
+from pathlib import Path
 
 DATABASE_NAME = 'vocabulary.db'
 
 
 def start_test():
     """Запускает режим тестирования."""
-    # 1. Получаем все слова из БД
-    all_words = ...
+    all_words = database.get_words()
+
+    if not all_words:
+        return
 
     while True:
         # Выбираем случайное слово
-        english_word, correct_translation = random.choice(all_words)
+        # TODO: слова не должны выдаваться повторно в рамках одного теста
+        english_word, correct_translation = random.choice(list(all_words.items()))
 
         user_input = input(f"Как переводится '{english_word}'? (или 'стоп'/'exit' для выхода): ").strip().lower()
 
@@ -60,4 +65,5 @@ def main_menu():
 
 
 if __name__ == "__main__":
+    database.init_db()
     main_menu()

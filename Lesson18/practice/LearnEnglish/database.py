@@ -50,6 +50,22 @@ def view_words() -> None:
         print(f"Не удалось получить слова из базы данных: {e}")
 
 
+def get_words() -> dict:
+    sql = "SELECT english_word, russian_translation FROM words"
+    all_words = {}
+    with Connect(Path(DATABASE_NAME)) as cursor:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        if not rows:
+            print("Словарь пуст. Добавьте слова, для запуска теста.")
+            return {}
+        else:
+            for row in rows:
+                all_words[row[0]] = row[1]
+
+    return all_words
+
+
 def delete_word(english_word: str) -> None:
     """Удаляет слово из словаря по английскому слову."""
     sql_delete = """DELETE FROM words WHERE english_word = ?"""
