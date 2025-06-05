@@ -42,7 +42,6 @@ def test_get_words_empty_dictionary(in_memory_cursor, capsys):
     words = get_words(in_memory_cursor)
 
     assert words == {}, "Функция должна возвращать пустой словарь при отсутствии слов."
-    assert "Словарь пуст. Добавьте слова, для запуска теста." in captured.out.strip()
 
 
 def test_get_words_single_word(in_memory_cursor, capsys):

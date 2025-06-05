@@ -3,20 +3,28 @@ import sqlite3
 from pathlib import Path
 from helpers.connection import Connect
 
-DATABASE_NAME = 'vocabulary.db'
-
 
 def init_db(cursor: sqlite3.Cursor):
     """Инициализирует базу данных, создает таблицу words, если ее нет."""
-    sql = """
+    sql_words = """
     CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    english_word TEXT NOT NULL UNIQUE,
+    english_word TEXT NOT NULL UNIQUE, 
     russian_translation TEXT NOT NULL
-    )
+    );    
+    """
+    sql_answers = """
+    CREATE TABLE IF NOT EXISTS answers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    word_id INTEGER NOT NULL,
+    timestamp TEXT NOT NULL,
+    is_correct INTEGER NOT NULL,
+    FOREIGN KEY (word_id) REFERENCES words (id) ON DELETE CASCADE
+    );
     """
     try:
-        cursor.execute(sql)
+        cursor.execute(sql_words)
+        cursor.execute(sql_answers)
         print("База данных готова.")
     except sqlite3.Error as e:
         print(f"Не удалось инициализировать базу данных: {e}")
@@ -25,6 +33,10 @@ def init_db(cursor: sqlite3.Cursor):
 def add_word(english_word: str, russian_translation: str, cursor: sqlite3.Cursor) -> None:
     """Позволяет пользователю добавить новое слово и перевод."""
     sql_insert = """INSERT INTO words (english_word, russian_translation) VALUES (?, ?)"""
+    english_word = english_word.strip().lower()
+    russian_translation = russian_translation.strip().lower()
+    if english_word == "" or russian_translation == "":
+        raise ValueError
     try:
         cursor.execute(sql_insert, (english_word, russian_translation))
         print("Слово добавлено.")

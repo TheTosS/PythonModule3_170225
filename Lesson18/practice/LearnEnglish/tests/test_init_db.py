@@ -27,9 +27,10 @@ def test_init_db_creates_table(db_cursor):  # <--- Теперь фикстура
     # Проверяем, что таблица 'words' существует, используя тот же cursor
     tables = get_all_tables(db_cursor)
     assert 'words' in tables, "Таблица 'words' должна быть создана."
+    assert 'answers' in tables, "Таблица 'answers' должна быть создана."
 
 
-def test_init_db_creates_correct_columns(db_cursor):  # <--- Принимает cursor
+def test_init_db_creates_correct_columns_words(db_cursor):  # <--- Принимает cursor
     """
     Тест: Убедиться, что таблица 'words' имеет правильные колонки.
     """
@@ -48,3 +49,20 @@ def test_init_db_creates_correct_columns(db_cursor):  # <--- Принимает 
     assert column_types['russian_translation'] == 'TEXT'
 
 
+def test_init_db_creates_correct_columns_answers(db_cursor):  # <--- Принимает cursor
+    """
+    Тест: Убедиться, что таблица 'words' имеет правильные колонки.
+    """
+    init_db(db_cursor)
+    columns_info = get_table_info(db_cursor, 'answers')
+
+    column_names = [col[1] for col in columns_info]
+    column_types = {col[1]: col[2] for col in columns_info}
+
+    assert 'id' in column_names
+    assert 'word_id' in column_names
+    assert 'timestamp' in column_names
+
+    assert column_types['id'] == 'INTEGER'
+    assert column_types['word_id'] == 'INTEGER'
+    assert column_types['timestamp'] == 'TEXT'
