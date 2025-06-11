@@ -27,7 +27,7 @@ def run_server():
                 print(f"Получено: {data.decode('utf-8').strip()}")
 
                 # Отправляем ответ клиенту
-                response = "HTTP/1.1 200 OK\nContent-Type: text/plain; charset=utf-8\n\nПривет от сервера!"
+                response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nПривет от сервера!"
                 conn.sendall(response.encode('utf-8'))
 
                 print("Ответ отправлен.")
